@@ -1,0 +1,24 @@
+#!/bin/bash
+
+	POT=~/Desktop/AlgatorWeb	#Path to django server
+
+	function cleanup() {
+		kill $(ps auxw | grep -m 1 algator.TaskServer | awk '{ print $2}') & kill $(ps auxw | grep -m 1 runserver | awk '{ print $2}')
+	}	
+	
+	cd $POT
+	
+	echo "Poganjam django server..."
+	
+	$(python manage.py runserver) & 
+	
+	echo "Poganjam java task server" 
+	
+	$(java algator.TaskServer) &
+	
+	echo "Končano..."
+		
+	trap 'cleanup' EXIT	
+	
+	sleep infinity
+

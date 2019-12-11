@@ -1,0 +1,61 @@
+Vsaka koda ima svojo številko, na katero je narejena referenca v navodilih.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1.
+url(r'^shrani', views.shrani, name='shrani')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.
+import base64, bleach
+
+#@login_required -- Marko
+@require_http_methods(["POST"])
+def shrani(request):
+    text = ""
+    Bytes = base64.decodestring(request.POST['tekst']).strip().split(",")
+
+    for byte in Bytes:
+        text += chr(int(byte))
+
+    text = bleach.clean(text)
+    
+    if request.POST.get('path',False):
+        path = request.POST['path']
+        manData = open(path, "w")
+        manData.write("<html>"+text.encode("utf-8")+"</html>")
+        manData.close()
+    elif ((request.POST.get('project',False) is not False) & (request.POST.get('select',False) is not False)):
+        projectName = request.POST['project']
+        select = request.POST['select']
+        gc = GlobalConfig()
+        path = gc.projects_path+"/PROJ-"+projectName+"/proj/doc/"+select+".html"
+        manData = open(path, "w")
+        manData.write("<html>"+text.encode("utf-8")+"</html>")
+        manData.close()
+
+    return HttpResponse(text)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3.0.1.
+<script type="text/javascript" src="{% static 'js/saving_descriptions.js' %}"></script>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3.1.1.
+<div id="polozaj{{ presenter.name }}{{ forloop.counter }}" class="text-right">
+	<span id="gumb{{ presenter.name }}{{ forloop.counter }}" name="submit" class="flg glyphicon  glyphicon glyphicon-edit primary-color"
+		onclick="toggleArea1('{{ presenter.path }}','html{{ presenter.name }}{{ forloop.counter }}','gumb{{ presenter.name }}{{ forloop.counter }}','{% url "problems:shrani" %}');"
+	></span>
+</div>  
+
+{% csrf_token %}
+<div id="html{{ presenter.name }}{{ forloop.counter }}" style="padding-top: 20px;">{{ presenter.html_desc|safe }}</div>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3.2.1.
+<span id="gumb_problem" name="submit" class="flg glyphicon  glyphicon glyphicon-edit primary-color"
+	style="float:right; margin-right: 10px;"
+	onclick="toggleArea1(null,'ProblemDescrition','gumb_problem','{% url "problems:shrani" %}','{{project.name}}','project');"
+></span>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3.2.2.
+<div id="ProblemDescrition">{{project.html_desc|safe }}</div>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5.
+<!-- Editor -->
+<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
