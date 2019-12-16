@@ -1,6 +1,8 @@
-Računalništvo v praksi 2
+# Computer Science in Practice
 
-Repozitorij vsebuje moje delo s projekta in navodila kako zadevo dodati k projektu.
+This repository contains my part of Algator project which can be found on [this link](https://github.com/ALGatorDevel/ALGatorWeb).
 
-Ime projekta: Algator
-Prof: Tomaž Dobravec
+I've also included instructions in Slovenian language on how to include it in older versions of Algator.
+
+Project name: Algator<br>
+Project owner: Tomaž Dobravec
